@@ -14,7 +14,7 @@ stmt: simple_stmt | compound_stmt;
 simple_stmt: small_stmt  NEWLINE;
 small_stmt: expr_stmt | flow_stmt;
 expr_stmt: testlist ( (augassign testlist) |
-                     ('=' testlist)*);//连等 加等/减等/...
+                     ('=' testlist)*);// 连等 加等/减等/...
 augassign: ('+=' | '-=' | '*=' | '/=' | '//=' | '%=' );
 flow_stmt: break_stmt | continue_stmt | return_stmt;
 break_stmt: 'break';
@@ -38,7 +38,7 @@ factor: ('+'|'-') factor | atom_expr;
 atom_expr: atom trailer?;
 trailer: '(' (arglist)? ')' ;
 atom: (NAME | NUMBER | STRING+| 'None' | 'True' | 'False' | ('(' test ')'));
-testlist: test (',' test)* (',')?;//算式  eg： a,b   a   a+b
+testlist: test (',' test)* (',')?;// 算式  eg： a,b   a   a+b
 arglist: argument (',' argument)*  (',')?;
 argument: ( test |
             test '=' test );

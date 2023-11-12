@@ -20,4 +20,6 @@ add_executable(code ${main_src}) # Add all *.cpp file after src/main.cpp, like s
 ### YOU CAN'T MODIFY THE CODE BELOW
 target_link_libraries(code PyAntlr)
 target_link_libraries(code antlr4-runtime)
+#target_link_libraries(code thread)
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 ### YOU CAN"T MODIFY THE CODE ABOVE
