@@ -682,6 +682,7 @@ sjtu::int2048 &sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
     }
     d.check_len();
     *this = d;
+    neg = res_neg;
     return *this;
 }
 
