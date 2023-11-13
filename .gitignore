@@ -7,3 +7,5 @@ antlr-playground/.antlr
 resources/.antlr
 # Testcases
 testcases/hidden-testcases
+prework/
+t.in

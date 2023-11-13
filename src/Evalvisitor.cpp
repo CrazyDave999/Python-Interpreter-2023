@@ -42,7 +42,7 @@ std::any EvalVisitor::visitTypedargslist(Python3Parser::TypedargslistContext *ct
 }
 
 std::any EvalVisitor::visitTfpdef(Python3Parser::TfpdefContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitStmt(Python3Parser::StmtContext *ctx) {
@@ -63,7 +63,6 @@ std::any EvalVisitor::visitSimple_stmt(Python3Parser::Simple_stmtContext *ctx) {
     }
     return {};
 //    return visitChildren(ctx);
-
 }
 
 std::any EvalVisitor::visitSmall_stmt(Python3Parser::Small_stmtContext *ctx) {
@@ -118,7 +117,7 @@ std::any EvalVisitor::visitExpr_stmt(Python3Parser::Expr_stmtContext *ctx) {
 }
 
 std::any EvalVisitor::visitAugassign(Python3Parser::AugassignContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitFlow_stmt(Python3Parser::Flow_stmtContext *ctx) {
@@ -132,11 +131,11 @@ std::any EvalVisitor::visitFlow_stmt(Python3Parser::Flow_stmtContext *ctx) {
 }
 
 std::any EvalVisitor::visitBreak_stmt(Python3Parser::Break_stmtContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitContinue_stmt(Python3Parser::Continue_stmtContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitReturn_stmt(Python3Parser::Return_stmtContext *ctx) {
@@ -148,7 +147,14 @@ std::any EvalVisitor::visitReturn_stmt(Python3Parser::Return_stmtContext *ctx) {
 }
 
 std::any EvalVisitor::visitCompound_stmt(Python3Parser::Compound_stmtContext *ctx) {
-    return visitChildren(ctx);
+    if (ctx->if_stmt()) {
+        return visitIf_stmt(ctx->if_stmt());
+    } else if (ctx->while_stmt()) {
+        return visitWhile_stmt(ctx->while_stmt());
+    } else if (ctx->funcdef()) {
+        return visitFuncdef(ctx->funcdef());
+    }
+    return {};
 }
 
 std::any EvalVisitor::visitIf_stmt(Python3Parser::If_stmtContext *ctx) {

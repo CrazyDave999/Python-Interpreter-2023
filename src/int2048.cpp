@@ -698,6 +698,9 @@ double sjtu::int2048::to_double() {
         res *= 10000;
         res += a[i];
     }
+    if (neg) {
+        res = -res;
+    }
     return res;
 }
 
