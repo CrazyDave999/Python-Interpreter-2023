@@ -244,7 +244,7 @@ sjtu::int2048 &sjtu::int2048::minus(const sjtu::int2048 &rhs) {
         return *this;
     }
     bool is_neg = false;
-    int2048 x, y; // x绝对值大
+    int2048 x, y;// x绝对值大
     if (neg) {
         if (*this < rhs) {
             x = *this;
@@ -623,53 +623,65 @@ sjtu::int2048 sjtu::inverse(const sjtu::int2048 &a) {
 }
 
 
-sjtu::int2048 sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
-//    assert(false);
-    return divide(*this, rhs);
+sjtu::int2048 &sjtu::int2048::sub_mul(const sjtu::int2048 &b, int mul, int offset) {
+    if (mul == 0) return *this;
+    long long borrow = 0;
+    for (size_t i = 0; i < b.a.size(); ++i) {
+        borrow += a[i + offset] - b.a[i] * mul - BASE + 1;
+        a[i + offset] = borrow % BASE + BASE - 1;
+        borrow /= BASE;
+    }
+    for (size_t i = b.a.size(); borrow; ++i) {
+        borrow += a[i + offset] - BASE + 1;
+        a[i + offset] = borrow % BASE + BASE - 1;
+        borrow /= BASE;
+    }
+    return *this;
+}
+
+
+sjtu::int2048 &sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
+    int2048 d;
+    int2048 r = *this;
     bool res_neg = neg ^ rhs.neg;
+    if (a[len - 1] == 0) {
+        return *this;
+    }
     if (abs_less(*this, rhs)) {
-        if (*this != 0 && res_neg) {
-            *this = -1;
-        } else {
-            clear();
-        }
+        *this = res_neg ? -1 : 0;
         return *this;
     }
-    if (rhs == int2048(1))
-        return *this;
-    if (*this == rhs)
-        return *this = int2048(1);
+    d.len = a.size() - rhs.a.size() + 1;
+    d.a.resize(a.size() - rhs.a.size() + 1);
 
-    int l1 = len, l2 = rhs.len;
-    int2048 inv;
-
-
-    int2048 divisor = rhs;
-    divisor.neg = false;
-
-    if (l1 > (l2 << 1)) {
-        int offset = l1 - (l2 << 1);
-        *this <<= offset;
-        divisor <<= offset;
-        inv = inverse(divisor);
-        l2 = l1 - l2;
-    } else {
-        inv = inverse(divisor);
+    long long x1 = rhs.a.size() >= 2 ? rhs.a[rhs.a.size() - 2] : 0;
+    long long x2 = rhs.a.size() >= 3 ? rhs.a[rhs.a.size() - 3] : 0;
+    double t = (x1 + (x2 + 1.0) / BASE);
+    double db = 1.0 / (rhs.a.back() + t / BASE);
+    long long tmp;
+    for (size_t i = a.size() - 1, j = d.a.size() - 1; j <= a.size();) {
+        long long rm = i == r.a.size() - 1 ? r.a[i] : r.a[i + 1] * BASE + r.a[i];
+        tmp = i == r.a.size() - 1 ? 0 : r.a[i + 1];
+        long long m = std::max((long long) (db * rm), tmp);
+        r.sub_mul(rhs, m, j);
+        d.a[j] += m;
+        tmp = i == r.a.size() - 1 ? 0 : r.a[i + 1];
+        if (!tmp)
+            --i, --j;
     }
-    neg = false;
-    int2048 dividend = *this;
-
-
-    (*this) *= inv;
-
-    (*this) >>= (l2 << 1);
-    int2048 delta = dividend - (*this) * divisor;
-    while (delta >= divisor) {
-        *this += 1;
-        delta -= divisor;
+    r.check_len();
+    long long carry = 0;
+    while (!abs_less(r, rhs)) {
+        r.minus(rhs);
+        ++carry;
     }
-    neg = res_neg;
-    if (delta != 0 && neg)*this -= 1;
+    for (long long &i: d.a) {
+        carry += i;
+        i = carry % BASE;
+        carry /= BASE;
+    }
+    d.check_len();
+    *this = d;
     return *this;
 }
 
@@ -691,7 +703,6 @@ void sjtu::int2048::check_len() {
     }
     a.resize(len);
 }
-
 
 double sjtu::int2048::to_double() {
     double res = 0;
