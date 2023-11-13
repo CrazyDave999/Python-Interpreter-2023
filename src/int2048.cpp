@@ -672,7 +672,7 @@ sjtu::int2048 &sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
     r.check_len();
     long long carry = 0;
     while (!abs_less(r, rhs)) {
-        r.minus(rhs);
+        r -= rhs;
         ++carry;
     }
     for (long long &i: d.a) {
@@ -683,6 +683,9 @@ sjtu::int2048 &sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
     d.check_len();
     *this = d;
     neg = res_neg;
+    if (r != 0 && neg) {
+        minus(1);
+    }
     return *this;
 }
 
