@@ -57,11 +57,12 @@ std::any EvalVisitor::visitStmt(Python3Parser::StmtContext *ctx) {
 }
 
 std::any EvalVisitor::visitSimple_stmt(Python3Parser::Simple_stmtContext *ctx) {
-    if (ctx->small_stmt()) {
-        auto ret = visitSmall_stmt(ctx->small_stmt());
-        return ret;
-    }
-    return {};
+//    if (ctx->small_stmt()) {
+//        auto ret = visitSmall_stmt(ctx->small_stmt());
+//        return ret;
+//    }
+//    return {};
+    return visitSmall_stmt(ctx->small_stmt());
 //    return visitChildren(ctx);
 }
 
@@ -69,11 +70,10 @@ std::any EvalVisitor::visitSmall_stmt(Python3Parser::Small_stmtContext *ctx) {
     if (ctx->expr_stmt()) {
         return visitExpr_stmt(ctx->expr_stmt());
     } else if (ctx->flow_stmt()) {
-        auto ret = visitFlow_stmt(ctx->flow_stmt());
-        return ret;
+        return visitFlow_stmt(ctx->flow_stmt());
     }
+    return {};
 //    return visitChildren(ctx);
-
 }
 
 std::any EvalVisitor::visitExpr_stmt(Python3Parser::Expr_stmtContext *ctx) {
@@ -142,7 +142,9 @@ std::any EvalVisitor::visitReturn_stmt(Python3Parser::Return_stmtContext *ctx) {
     if (ctx->testlist()) {
         return visitTestlist(ctx->testlist());
     } else {
-        return std::vector<std::any>();
+        std::vector<std::any> ret;
+        ret.emplace_back();
+        return ret;
     }
 }
 
@@ -205,7 +207,10 @@ std::any EvalVisitor::visitSuite(Python3Parser::SuiteContext *ctx) {
 
 
 std::any EvalVisitor::visitTest(Python3Parser::TestContext *ctx) {
-    return visitChildren(ctx);
+    if (ctx->or_test()) {
+        return visitOr_test(ctx->or_test());
+    }
+    return {};
 }
 
 std::any EvalVisitor::visitOr_test(Python3Parser::Or_testContext *ctx) {
@@ -214,7 +219,7 @@ std::any EvalVisitor::visitOr_test(Python3Parser::Or_testContext *ctx) {
         return visitAnd_test(test_array[0]); // 有可能是各种类型
     }
     for (auto test: test_array) {
-        auto is_true = std::any_cast<bool>(visitAnd_test(test));
+        auto is_true = to_bool(visitAnd_test(test));
         if (is_true) {
             return true;
         }
@@ -228,7 +233,7 @@ std::any EvalVisitor::visitAnd_test(Python3Parser::And_testContext *ctx) {
         return visitNot_test(test_array[0]); // 有可能是各种类型
     }
     for (auto test: test_array) {
-        auto is_true = std::any_cast<bool>(visitNot_test(test));
+        auto is_true = to_bool(visitNot_test(test));
         if (!is_true) {
             return false;
         }
@@ -240,12 +245,7 @@ std::any EvalVisitor::visitNot_test(Python3Parser::Not_testContext *ctx) {
     if (ctx->comparison()) {
         return visitComparison(ctx->comparison());
     } else if (ctx->not_test()) {
-        auto ret = visitNot_test(ctx->not_test());
-        if (std::any_cast<bool>(&ret)) {
-            return !std::any_cast<bool>(ret);
-        } else {
-            return ret;
-        }
+        return !to_bool(visitNot_test(ctx->not_test()));
     }
 }
 
@@ -282,7 +282,7 @@ std::any EvalVisitor::visitComparison(Python3Parser::ComparisonContext *ctx) {
 }
 
 std::any EvalVisitor::visitComp_op(Python3Parser::Comp_opContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 
@@ -306,7 +306,7 @@ std::any EvalVisitor::visitArith_expr(Python3Parser::Arith_exprContext *ctx) {
 }
 
 std::any EvalVisitor::visitAddorsub_op(Python3Parser::Addorsub_opContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitTerm(Python3Parser::TermContext *ctx) {
@@ -333,7 +333,7 @@ std::any EvalVisitor::visitTerm(Python3Parser::TermContext *ctx) {
 }
 
 std::any EvalVisitor::visitMuldivmod_op(Python3Parser::Muldivmod_opContext *ctx) {
-    return visitChildren(ctx);
+//    return visitChildren(ctx);
 }
 
 std::any EvalVisitor::visitFactor(Python3Parser::FactorContext *ctx) {

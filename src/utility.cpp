@@ -11,6 +11,8 @@ int get_type(const std::any val) {
         return 3;
     } else if (!val.has_value()) {
         return -1;
+    } else {
+        return 4;
     }
 }
 
@@ -186,6 +188,13 @@ std::any operator-(const std::any &rhs) {
 
 bool operator==(const std::any &lhs, const std::any &rhs) {
     int tp1 = get_type(lhs), tp2 = get_type(rhs);
+    if (tp1 == -1 || tp2 == -1) {
+        if (tp1 == tp2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     if (tp1 == 3 && tp2 == 3) {
         return std::any_cast<std::string>(lhs) == std::any_cast<std::string>(rhs);
     } else if (tp1 == 3 || tp2 == 3) {
