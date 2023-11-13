@@ -623,8 +623,9 @@ sjtu::int2048 sjtu::inverse(const sjtu::int2048 &a) {
 }
 
 
-sjtu::int2048 &sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
+sjtu::int2048 sjtu::int2048::operator/=(const sjtu::int2048 &rhs) {
 //    assert(false);
+    return divide(*this, rhs);
     bool res_neg = neg ^ rhs.neg;
     if (abs_less(*this, rhs)) {
         if (*this != 0 && res_neg) {

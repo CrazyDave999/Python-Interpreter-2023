@@ -41,6 +41,10 @@ ll to_ll(const std::any &val) {
         return {(long long) std::any_cast<double>(val)};
     } else if (tp == 3) {
         return {std::any_cast<std::string>(val)};
+//        auto str = std::any_cast<std::string>(val);
+//        char s[200]{'\0'};
+//        for (int i = 0; i < str.length(); ++i)s[i] = str[i];
+//        return strtoll(s, nullptr, 10);
     } else {
         return {};
     }
@@ -51,7 +55,9 @@ double to_double(const std::any &val) {
     if (tp == 0) {
         return std::any_cast<bool>(val) ? 1.0 : 0.0;
     } else if (tp == 1) {
+//        return double(std::any_cast<ll>(val));
         return std::any_cast<ll>(val).to_double();
+//        return double(std::any_cast<ll>(val));
     } else if (tp == 2) {
         return std::any_cast<double>(val);
     } else if (tp == 3) {
@@ -89,7 +95,9 @@ std::string to_string(std::any &val) {
     if (tp == 0) {
         return std::any_cast<bool>(val) ? "True" : "False";
     } else if (tp == 1) {
+//        return std::to_string(std::any_cast<ll>(val));
         return std::any_cast<ll>(val).to_string();
+//        return std::any_cast<ll>(val)._TOSTRING();
     } else if (tp == 2) {
         char s[200];
         sprintf(s, "%.6lf", std::any_cast<double>(val));

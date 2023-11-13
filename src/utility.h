@@ -3,6 +3,7 @@
 #include "int2048.h"
 #include <cmath>
 
+
 using ll = sjtu::int2048;
 
 int get_type(std::any val);
